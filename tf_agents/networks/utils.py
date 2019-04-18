@@ -164,16 +164,17 @@ def mlp_layers(conv_layer_params=None,
         raise ValueError('Dropout and full connected layer parameter lists have'
                          ' different lengths (%d vs. %d.)' %
                          (len(dropout_layer_params), len(fc_layer_params)))
+    i = 0
     for num_units, dropout_params in zip(fc_layer_params, dropout_layer_params):
       layers.append(tf.keras.layers.Dense(
           num_units,
           activation=activation_fn,
           kernel_initializer=kernel_initializer,
-          name='/'.join([name, 'dense']) if name else None))
+          name='/'.join([name, 'dense', str(i)]) if name else None))
       if not isinstance(dropout_params, dict):
         dropout_params = {'rate': dropout_params} if dropout_params else None
 
       if dropout_params is not None:
         layers.append(maybe_permanent_dropout(**dropout_params))
-
+      i += 1
   return layers
